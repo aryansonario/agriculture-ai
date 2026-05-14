@@ -791,8 +791,10 @@ def analyze_image():
     mime_type = data["mime_type"]
     prompt = (
         "You are an expert botanist and agricultural ML model. "
-        "Analyze the provided image of a plant, crop, or flower. "
-        "Provide exactly three JSON fields: "
+        "First, check if the image actually contains a plant, crop, leaf, flower, or soil. "
+        "If it DOES NOT contain any plant or agriculture-related subject, set 'quality' to 'Error: No plant detected in this image.', "
+        "set 'disease' to 'N/A', and 'precautions' to 'Please upload a clear picture of a plant or crop.' "
+        "If it DOES contain a plant, analyze it and provide exactly three JSON fields: "
         "- quality: A brief assessment of the plant's visual quality and health. "
         "- disease: Identify any visible diseases, pests, or issues (or state 'None detected'). "
         "- precautions: Provide 1-2 practical steps to care for this plant or treat any identified issues."
