@@ -1,15 +1,17 @@
 from flask import Flask, jsonify, request, send_from_directory
 import json
 import os
-import sqlite3
 import time
 from threading import Lock
 from google import genai
 from google.genai import types
+from supabase import create_client, Client
+from datetime import datetime
 
 
 PUMP_THRESHOLD = 30.0
-DB_FILE = "agriculture.db"
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://zdssdthnchagpqypgzaa.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 FRONTEND_FOLDER = "."
 AUTO_SEED_DEMO_DATA = True
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
@@ -23,6 +25,9 @@ GEMINI_SENSOR_HISTORY_LIMIT = max(
     1,
     min(40, int(os.getenv("GEMINI_SENSOR_HISTORY_LIMIT", "40"))),
 )
+
+# Initialize Supabase client
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 VALID_PLANT_TYPES = {"crop", "tree", "none"}
 DEFAULT_CONTEXT = {
@@ -182,72 +187,13 @@ gemini_rotation_lock = Lock()
 loaded_gemini_keys_signature = tuple(state["key"] for state in gemini_key_states)
 
 
-def get_connection():
-    return sqlite3.connect(DB_FILE)
-
-
-def ensure_column_exists(cursor, table_name, column_name, definition):
-    cursor.execute(f"PRAGMA table_info({table_name})")
-    existing_columns = {row[1] for row in cursor.fetchall()}
-    if column_name not in existing_columns:
-        cursor.execute(
-            f"ALTER TABLE {table_name} ADD COLUMN {column_name} {definition}"
-        )
-
-
 def init_database():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS sensor_data (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            moisture REAL,
-            temperature REAL,
-            humidity REAL,
-            ph REAL,
-            pump_status TEXT DEFAULT 'OFF',
-            crop_suggestion TEXT,
-            irrigation_advice TEXT,
-            soil_health TEXT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-        """
-    )
-
-    ensure_column_exists(cursor, "sensor_data", "plant_type", "TEXT DEFAULT 'none'")
-    ensure_column_exists(cursor, "sensor_data", "plant_name", "TEXT DEFAULT ''")
-
-    cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS farm_context (
-            id INTEGER PRIMARY KEY CHECK (id = 1),
-            plant_type TEXT DEFAULT 'none',
-            plant_name TEXT DEFAULT '',
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-        """
-    )
-
-    cursor.execute(
-        """
-        INSERT OR IGNORE INTO farm_context (id, plant_type, plant_name)
-        VALUES (1, 'none', '')
-        """
-    )
-
-    conn.commit()
-    conn.close()
+    print("[SUPABASE] Using Supabase for database operations")
 
 
 def count_sensor_rows():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM sensor_data")
-    count = cursor.fetchone()[0]
-    conn.close()
-    return count
+    response = supabase.table("sensor_data").select("*", count="exact").execute()
+    return response.count
 
 
 def normalize_farm_context(plant_type, plant_name):
@@ -266,43 +212,24 @@ def normalize_farm_context(plant_type, plant_name):
 
 
 def get_farm_context():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        SELECT plant_type, plant_name
-        FROM farm_context
-        WHERE id = 1
-        """
-    )
-    row = cursor.fetchone()
-    conn.close()
-
-    if row is None:
+    response = supabase.table("farm_context").select("plant_type, plant_name").eq("id", 1).execute()
+    if not response.data:
         return DEFAULT_CONTEXT.copy()
 
+    row = response.data[0]
     return {
-        "plant_type": row[0] or "none",
-        "plant_name": row[1] or "",
+        "plant_type": row.get("plant_type") or "none",
+        "plant_name": row.get("plant_name") or "",
     }
 
 
 def save_farm_context(plant_type, plant_name):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO farm_context (id, plant_type, plant_name, updated_at)
-        VALUES (1, ?, ?, CURRENT_TIMESTAMP)
-        ON CONFLICT(id) DO UPDATE SET
-            plant_type = excluded.plant_type,
-            plant_name = excluded.plant_name,
-            updated_at = CURRENT_TIMESTAMP
-        """,
-        (plant_type, plant_name),
-    )
-    conn.commit()
-    conn.close()
+    supabase.table("farm_context").upsert({
+        "id": 1,
+        "plant_type": plant_type,
+        "plant_name": plant_name,
+        "updated_at": datetime.utcnow().isoformat()
+    }).execute()
 
 
 def save_to_database(
@@ -313,45 +240,17 @@ def save_to_database(
     pump_status,
     timestamp=None,
 ):
-    conn = get_connection()
-    cursor = conn.cursor()
-
+    data = {
+        "moisture": moisture,
+        "temperature": temperature,
+        "humidity": humidity,
+        "ph": ph,
+        "pump_status": pump_status,
+    }
     if timestamp:
-        cursor.execute(
-            """
-            INSERT INTO sensor_data (
-                moisture, temperature, humidity, ph, pump_status, timestamp
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-            """,
-            (
-                moisture,
-                temperature,
-                humidity,
-                ph,
-                pump_status,
-                timestamp,
-            ),
-        )
-    else:
-        cursor.execute(
-            """
-            INSERT INTO sensor_data (
-                moisture, temperature, humidity, ph, pump_status
-            )
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                moisture,
-                temperature,
-                humidity,
-                ph,
-                pump_status,
-            ),
-        )
+        data["timestamp"] = timestamp
 
-    conn.commit()
-    conn.close()
+    supabase.table("sensor_data").insert(data).execute()
 
 
 def seed_demo_data():
@@ -374,61 +273,15 @@ def seed_demo_data():
 
 
 def get_latest_sensor_row_from_database():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        SELECT id, moisture, temperature, humidity, pump_status, timestamp
-        FROM sensor_data
-        ORDER BY id DESC
-        LIMIT 1
-        """
-    )
-    row = cursor.fetchone()
-    conn.close()
-
-    if row is None:
+    response = supabase.table("sensor_data").select("id, moisture, temperature, humidity, pump_status, timestamp").order("id", desc=True).limit(1).execute()
+    if not response.data:
         return None
-
-    return {
-        "id": row[0],
-        "moisture": row[1],
-        "temperature": row[2],
-        "humidity": row[3],
-        "pump_status": row[4],
-        "timestamp": row[5],
-    }
+    return response.data[0]
 
 
 def get_recent_sensor_rows_from_database(limit=GEMINI_SENSOR_HISTORY_LIMIT):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        SELECT id, moisture, temperature, humidity, pump_status, timestamp
-        FROM sensor_data
-        ORDER BY id DESC
-        LIMIT ?
-        """,
-        (limit,),
-    )
-    rows = cursor.fetchall()
-    conn.close()
-
-    recent_rows = []
-    for row in reversed(rows):
-        recent_rows.append(
-            {
-                "id": row[0],
-                "moisture": row[1],
-                "temperature": row[2],
-                "humidity": row[3],
-                "pump_status": row[4],
-                "timestamp": row[5],
-            }
-        )
-
-    return recent_rows
+    response = supabase.table("sensor_data").select("id, moisture, temperature, humidity, pump_status, timestamp").order("id", desc=True).limit(limit).execute()
+    return list(reversed(response.data))
 
 
 def get_latest_from_database():
@@ -921,12 +774,8 @@ def manual_pump_control():
 
 @app.route("/api/seed-demo", methods=["POST"])
 def seed_demo_endpoint():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM sensor_data")
-    cursor.execute("DELETE FROM farm_context")
-    conn.commit()
-    conn.close()
+    supabase.table("sensor_data").delete().neq("id", 0).execute()
+    supabase.table("farm_context").delete().neq("id", 0).execute()
 
     init_database()
     seed_demo_data()

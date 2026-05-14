@@ -1,4 +1,4 @@
-const FLASK_URL = "http://localhost:5000";
+const FLASK_URL = "https://swapping-alto-unrest.ngrok-free.dev";
 const FETCH_INTERVAL = 10000;
 
 const BASE_TRANSLATIONS = {
