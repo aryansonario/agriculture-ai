@@ -40,3 +40,4 @@ Main focus:
 - Small secondary sensor readings for DHT22 temperature, humidity, soil moisture, and pH
 - Language switcher for English, Hindi, and Marathi
 # agriculture-ai
+# agriculture-ai
