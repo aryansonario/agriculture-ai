@@ -20,19 +20,19 @@ const BASE_TRANSLATIONS = {
   forceOff: "Force OFF",
   cropLabel: "Crop Suggestion",
   cropTitle: "Analysing...",
-  cropBody: "Waiting for Gemini AI response.",
+  cropBody: "Waiting for ML model response.",
   irrigLabel: "Irrigation Advice",
   waterTitle: "Analysing...",
-  waterBody: "Waiting for Gemini AI response.",
+  waterBody: "Waiting for ML model response.",
   soilLabel: "Soil Health",
   soilTitle: "Analysing...",
-  soilBody: "Waiting for Gemini AI response.",
-  footer: "Smart Farm Advisor - Powered by Gemini AI - ESP32 Sensor",
+  soilBody: "Waiting for ML model response.",
+  footer: "Smart Farm Advisor - Powered by Smart ML Model - ESP32 Sensor",
   updated: "Last updated: ",
   noData: "No sensor data yet. Is the ESP32 connected?",
   plantSectionLabel: "Field Context",
   plantSectionTitle: "Tell us what is growing on this soil",
-  plantSectionSub: "This is sent to Flask and included with the ESP32 data for Gemini.",
+  plantSectionSub: "This is sent to Flask and included with the ESP32 data for our ML model.",
   plantTypeLabel: "What is currently grown?",
   plantNameLabel: "Crop or tree name",
   plantNameCrop: "Crop name",
@@ -43,16 +43,27 @@ const BASE_TRANSLATIONS = {
   plantCropPlaceholder: "Example: wheat, rice, cotton",
   plantTreePlaceholder: "Example: mango, neem, coconut",
   plantSave: "Save field info",
-  plantHint: "This helps Gemini tailor the advice to the current field.",
+  plantHint: "This helps our ML model tailor the advice to the current field.",
   plantSaving: "Saving field info...",
   plantSavedCrop: "Crop information saved.",
   plantSavedTree: "Tree information saved.",
   plantSavedNone: "Saved: nothing is currently grown on this soil.",
   plantRequired: "Please enter the crop or tree name.",
   plantError: "Could not save field info.",
-  geminiLoadingTitle: "Sending sensor data to Gemini...",
-  geminiLoadingBody: "Please wait while Gemini reviews the latest 1 to 40 sensor readings and prepares advice.",
-  geminiError: "Could not get Gemini advice right now.",
+  geminiLoadingTitle: "Sending data to ML model...",
+  geminiLoadingBody: "Please wait while our ML model reviews the data and prepares advice.",
+  geminiError: "Could not get ML model advice right now.",
+  imageSectionLabel: "Plant Health Vision",
+  imageSectionTitle: "Scan your plant or crop",
+  imageSectionSub: "Upload a photo to check for diseases, quality, and get care instructions.",
+  imageUploadText: "Tap to take a picture or upload",
+  analyzeBtn: "Analyze Image",
+  imageResultTitle: "Analysis Result",
+  qualityLabel: "Quality:",
+  diseaseLabel: "Disease/Issues:",
+  precautionsLabel: "Precautions:",
+  analyzingImageTitle: "Analyzing Image...",
+  analyzingImageBody: "Our ML model is inspecting the plant for diseases and quality.",
   cropAdviceTitle: "Crop Advice",
   treeAdviceTitle: "Tree Advice",
   openFieldAdviceTitle: "Suggested Plants",
@@ -95,19 +106,19 @@ const TRANSLATIONS = {
     forceOff: "जबरदस्ती बंद",
     cropLabel: "फसल सुझाव",
     cropTitle: "विश्लेषण हो रहा है...",
-    cropBody: "Gemini AI के उत्तर का इंतजार है।",
+    cropBody: "ML मॉडल के उत्तर का इंतजार है।",
     irrigLabel: "सिंचाई सलाह",
     waterTitle: "विश्लेषण हो रहा है...",
-    waterBody: "Gemini AI के उत्तर का इंतजार है।",
+    waterBody: "ML मॉडल के उत्तर का इंतजार है।",
     soilLabel: "मिट्टी स्वास्थ्य",
     soilTitle: "विश्लेषण हो रहा है...",
-    soilBody: "Gemini AI के उत्तर का इंतजार है।",
-    footer: "स्मार्ट फार्म सलाहकार - Gemini AI - ESP32 सेंसर",
+    soilBody: "ML मॉडल के उत्तर का इंतजार है।",
+    footer: "स्मार्ट फार्म सलाहकार - ML मॉडल - ESP32 सेंसर",
     updated: "अंतिम अपडेट: ",
     noData: "अभी सेंसर डेटा नहीं है। क्या ESP32 जुड़ा है?",
     plantSectionLabel: "खेत की जानकारी",
     plantSectionTitle: "बताइए इस मिट्टी में क्या उगाया जा रहा है",
-    plantSectionSub: "यह जानकारी Flask को भेजी जाएगी और ESP32 डेटा के साथ Gemini को दी जाएगी।",
+    plantSectionSub: "यह जानकारी Flask को भेजी जाएगी और ESP32 डेटा के साथ ML मॉडल को दी जाएगी।",
     plantTypeLabel: "अभी क्या उगाया जा रहा है?",
     plantNameLabel: "फसल या पेड़ का नाम",
     plantNameCrop: "फसल का नाम",
@@ -118,13 +129,24 @@ const TRANSLATIONS = {
     plantCropPlaceholder: "उदाहरण: गेहूं, धान, कपास",
     plantTreePlaceholder: "उदाहरण: आम, नीम, नारियल",
     plantSave: "जानकारी सहेजें",
-    plantHint: "इससे Gemini खेत के हिसाब से सही सलाह देगा।",
+    plantHint: "इससे ML मॉडल खेत के हिसाब से सही सलाह देगा।",
     plantSaving: "जानकारी सहेजी जा रही है...",
     plantSavedCrop: "फसल की जानकारी सहेज ली गई।",
     plantSavedTree: "पेड़ की जानकारी सहेज ली गई।",
     plantSavedNone: "सहेजा गया: अभी इस मिट्टी में कुछ नहीं उगाया जा रहा है।",
     plantRequired: "कृपया फसल या पेड़ का नाम लिखें।",
     plantError: "जानकारी सहेजी नहीं जा सकी।",
+    imageSectionLabel: "पौधे की दृष्टि",
+    imageSectionTitle: "अपने पौधे या फसल को स्कैन करें",
+    imageSectionSub: "बीमारियों, गुणवत्ता की जांच करने और देखभाल के निर्देश प्राप्त करने के लिए एक तस्वीर अपलोड करें।",
+    imageUploadText: "तस्वीर लेने या अपलोड करने के लिए टैप करें",
+    analyzeBtn: "छवि का विश्लेषण करें",
+    imageResultTitle: "विश्लेषण का परिणाम",
+    qualityLabel: "गुणवत्ता:",
+    diseaseLabel: "बीमारी/समस्याएं:",
+    precautionsLabel: "सावधानियां:",
+    analyzingImageTitle: "छवि का विश्लेषण हो रहा है...",
+    analyzingImageBody: "हमारा ML मॉडल बीमारियों और गुणवत्ता के लिए पौधे का निरीक्षण कर रहा है।",
     cropAdviceTitle: "फसल सलाह",
     treeAdviceTitle: "पेड़ सलाह",
     openFieldAdviceTitle: "उपयुक्त पौधे",
@@ -165,19 +187,19 @@ const TRANSLATIONS = {
     forceOff: "जबरदस्ती बंद",
     cropLabel: "पिक सल्ला",
     cropTitle: "विश्लेषण सुरू आहे...",
-    cropBody: "Gemini AI च्या उत्तराची वाट पाहत आहोत.",
+    cropBody: "ML मॉडेलच्या उत्तराची वाट पाहत आहोत.",
     irrigLabel: "सिंचन सल्ला",
     waterTitle: "विश्लेषण सुरू आहे...",
-    waterBody: "Gemini AI च्या उत्तराची वाट पाहत आहोत.",
+    waterBody: "ML मॉडेलच्या उत्तराची वाट पाहत आहोत.",
     soilLabel: "माती आरोग्य",
     soilTitle: "विश्लेषण सुरू आहे...",
-    soilBody: "Gemini AI च्या उत्तराची वाट पाहत आहोत.",
-    footer: "स्मार्ट फार्म सल्लागार - Gemini AI - ESP32 सेन्सर",
+    soilBody: "ML मॉडेलच्या उत्तराची वाट पाहत आहोत.",
+    footer: "स्मार्ट फार्म सल्लागार - ML मॉडेल - ESP32 सेन्सर",
     updated: "शेवटचे अपडेट: ",
     noData: "अजून सेन्सर डेटा नाही. ESP32 जोडले आहे का?",
     plantSectionLabel: "शेतीची माहिती",
     plantSectionTitle: "या मातीत काय लावले आहे ते सांगा",
-    plantSectionSub: "ही माहिती Flask कडे जाईल आणि ESP32 डेटासोबत Gemini ला पाठवली जाईल.",
+    plantSectionSub: "ही माहिती Flask कडे जाईल आणि ESP32 डेटासोबत ML मॉडेलला पाठवली जाईल.",
     plantTypeLabel: "सध्या काय लावले आहे?",
     plantNameLabel: "पिक किंवा झाडाचे नाव",
     plantNameCrop: "पिकाचे नाव",
@@ -188,13 +210,24 @@ const TRANSLATIONS = {
     plantCropPlaceholder: "उदाहरण: गहू, तांदूळ, कापूस",
     plantTreePlaceholder: "उदाहरण: आंबा, कडुलिंब, नारळ",
     plantSave: "माहिती जतन करा",
-    plantHint: "यामुळे Gemini ला शेतानुसार योग्य सल्ला देता येईल.",
+    plantHint: "यामुळे ML मॉडेलला शेतानुसार योग्य सल्ला देता येईल.",
     plantSaving: "माहिती जतन केली जात आहे...",
     plantSavedCrop: "पिकाची माहिती जतन केली.",
     plantSavedTree: "झाडाची माहिती जतन केली.",
     plantSavedNone: "जतन केले: सध्या या मातीत काहीही लावलेले नाही.",
     plantRequired: "कृपया पिक किंवा झाडाचे नाव टाका.",
     plantError: "माहिती जतन करता आली नाही.",
+    imageSectionLabel: "वनस्पती दृष्टी",
+    imageSectionTitle: "तुमचे रोप किंवा पीक स्कॅन करा",
+    imageSectionSub: "आजारांची तपासणी करण्यासाठी, गुणवत्ता पाहण्यासाठी आणि काळजी कशी घ्यावी हे जाणून घेण्यासाठी फोटो अपलोड करा.",
+    imageUploadText: "फोटो काढण्यासाठी किंवा अपलोड करण्यासाठी टॅप करा",
+    analyzeBtn: "प्रतिमेचे विश्लेषण करा",
+    imageResultTitle: "विश्लेषणाचा परिणाम",
+    qualityLabel: "गुणवत्ता:",
+    diseaseLabel: "आजार/समस्या:",
+    precautionsLabel: "काळजी:",
+    analyzingImageTitle: "प्रतिमेचे विश्लेषण सुरू आहे...",
+    analyzingImageBody: "आमचे ML मॉडेल रोपाच्या आजारांची आणि गुणवत्तेची तपासणी करत आहे.",
     cropAdviceTitle: "पिक सल्ला",
     treeAdviceTitle: "झाड सल्ला",
     openFieldAdviceTitle: "योग्य वनस्पती",
@@ -258,7 +291,15 @@ const els = {
   plantNameLabel: document.getElementById("plantNameLabel"),
   plantSubmitBtn: document.getElementById("plantSubmitBtn"),
   plantStatusText: document.getElementById("plantStatusText"),
-  languageOptions: document.querySelectorAll("#languageSelect option")
+  languageOptions: document.querySelectorAll("#languageSelect option"),
+  imageInput: document.getElementById("plantImageInput"),
+  imagePreviewContainer: document.getElementById("imagePreviewContainer"),
+  imagePreview: document.getElementById("imagePreview"),
+  analyzeImageBtn: document.getElementById("analyzeImageBtn"),
+  imageAnalysisResult: document.getElementById("imageAnalysisResult"),
+  imageResultQuality: document.getElementById("imageResultQuality"),
+  imageResultDisease: document.getElementById("imageResultDisease"),
+  imageResultPrecautions: document.getElementById("imageResultPrecautions")
 };
 
 function t() {
@@ -662,6 +703,74 @@ function applyLanguage(lang) {
     els.loadingScreenTitle.textContent = strings.geminiLoadingTitle;
     els.loadingScreenText.textContent = strings.geminiLoadingBody;
   }
+}
+
+// Image Analysis Logic
+let selectedImageFile = null;
+
+if (els.imageInput) {
+  els.imageInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      selectedImageFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        els.imagePreview.src = e.target.result;
+        els.imagePreviewContainer.style.display = "block";
+        els.imageAnalysisResult.style.display = "none";
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+}
+
+if (els.analyzeImageBtn) {
+  els.analyzeImageBtn.addEventListener("click", async () => {
+    if (!selectedImageFile) return;
+
+    const strings = t();
+    els.loadingScreenTitle.textContent = strings.analyzingImageTitle;
+    els.loadingScreenText.textContent = strings.analyzingImageBody;
+    els.loadingScreen.classList.add("active");
+    els.loadingScreen.setAttribute("aria-hidden", "false");
+
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedImageFile);
+      reader.onload = async () => {
+        const base64Image = reader.result.split(',')[1];
+        const mimeType = selectedImageFile.type;
+
+        const response = await fetch(`${FLASK_URL}/api/analyze-image`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            image: base64Image,
+            mime_type: mimeType
+          })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Analysis failed");
+        }
+
+        els.imageResultQuality.textContent = result.quality || "N/A";
+        els.imageResultDisease.textContent = result.disease || "N/A";
+        els.imageResultPrecautions.textContent = result.precautions || "N/A";
+        els.imageAnalysisResult.style.display = "block";
+      };
+    } catch (error) {
+      console.error("Image analysis error:", error);
+      alert(error.message || "Failed to analyze image");
+    } finally {
+      // Need a small timeout as onload is async
+      setTimeout(() => {
+        els.loadingScreen.classList.remove("active");
+        els.loadingScreen.setAttribute("aria-hidden", "true");
+      }, 3000);
+    }
+  });
 }
 
 applyLanguage(currentLang);

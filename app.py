@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, send_from_directory
 import json
 import os
 import time
+import base64
 from threading import Lock
 from google import genai
 from google.genai import types
@@ -99,6 +100,16 @@ ADVICE_RESPONSE_SCHEMA = {
         "crop_suggestion": {"type": "STRING"},
         "irrigation_advice": {"type": "STRING"},
         "soil_health": {"type": "STRING"},
+    },
+}
+
+IMAGE_ANALYSIS_SCHEMA = {
+    "type": "OBJECT",
+    "required": ["quality", "disease", "precautions"],
+    "properties": {
+        "quality": {"type": "STRING"},
+        "disease": {"type": "STRING"},
+        "precautions": {"type": "STRING"},
     },
 }
 
@@ -749,6 +760,77 @@ def update_farm_context():
         "plant_name": farm_context["plant_name"],
         "latest_data": get_latest_from_database(),
     })
+
+
+@app.route("/api/analyze-image", methods=["POST"])
+def analyze_image():
+    data = request.get_json()
+    if not data or "image" not in data or "mime_type" not in data:
+        return jsonify({"error": "Missing image or mime_type"}), 400
+
+    try:
+        image_bytes = base64.b64decode(data["image"])
+    except Exception as e:
+        return jsonify({"error": f"Invalid base64 image data: {str(e)}"}), 400
+
+    mime_type = data["mime_type"]
+    prompt = (
+        "You are an expert botanist and agricultural ML model. "
+        "Analyze the provided image of a plant, crop, or flower. "
+        "Provide exactly three JSON fields: "
+        "- quality: A brief assessment of the plant's visual quality and health. "
+        "- disease: Identify any visible diseases, pests, or issues (or state 'None detected'). "
+        "- precautions: Provide 1-2 practical steps to care for this plant or treat any identified issues."
+    )
+
+    refresh_gemini_key_states()
+
+    if not gemini_key_states:
+        return jsonify({"error": "No ML model keys configured."}), 500
+
+    errors = []
+    
+    for index in get_next_ready_key_indices():
+        state = gemini_key_states[index]
+
+        try:
+            response = state["client"].models.generate_content(
+                model=GEMINI_MODEL,
+                contents=[
+                    types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
+                    prompt
+                ],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=IMAGE_ANALYSIS_SCHEMA,
+                    candidate_count=1,
+                    max_output_tokens=GEMINI_MAX_OUTPUT_TOKENS,
+                    temperature=GEMINI_TEMPERATURE,
+                ),
+            )
+            raw_text = (response.text or "").strip()
+            print(f"[ML_MODEL] Image analysis raw response: {raw_text[:300]}")
+            result = json.loads(raw_text) if raw_text else {}
+            
+            if not all(k in result for k in ["quality", "disease", "precautions"]):
+                raise ValueError(f"Response missing required keys. Got: {list(result.keys())}")
+
+            return jsonify(result)
+
+        except Exception as error:
+            error_text = str(error)
+            errors.append(error_text)
+            print(f"[ERROR] ML model image analysis error on key {index + 1}: {error_text}")
+
+            if is_gemini_quota_error(error_text):
+                mark_key_quota_limited(index, error_text)
+                continue
+
+            if is_gemini_auth_error(error_text):
+                disable_key(index, error_text)
+                continue
+
+    return jsonify({"error": f"ML model analysis failed. Errors: {errors[-1] if errors else 'Unknown'}"}), 500
 
 
 @app.route("/api/pump", methods=["POST"])

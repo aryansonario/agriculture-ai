@@ -1,15 +1,9 @@
--- Smart Farm Advisor - Test Data (No pH sensors)
--- Supabase SQL - Copy and paste into SQL Editor
-
--- Clear existing data
 DELETE FROM sensor_data;
 DELETE FROM farm_context;
 
--- Insert farm context (Wheat crop)
 INSERT INTO farm_context (id, plant_type, plant_name, updated_at)
-VALUES (1, 'crop', 'Wheat', '2026-05-13T08:00:00');
+VALUES (1, 'crop', 'Wheat', now());
 
--- Insert sensor readings (moisture, temperature, humidity, pump_status, timestamp)
 INSERT INTO sensor_data (moisture, temperature, humidity, pump_status, timestamp)
 VALUES
   (28.4, 33.1, 48.2, 'ON', '2026-05-13 08:00:00'),
@@ -22,8 +16,3 @@ VALUES
   (49.3, 29.1, 63.5, 'OFF', '2026-05-13 10:20:00'),
   (35.2, 31.5, 55.1, 'ON', '2026-05-13 10:40:00'),
   (45.8, 28.9, 61.2, 'OFF', '2026-05-13 11:00:00');
-
--- Verify data loaded
-SELECT COUNT(*) as total_sensor_readings FROM sensor_data;
-SELECT * FROM farm_context;
-SELECT * FROM sensor_data ORDER BY id DESC LIMIT 5;
