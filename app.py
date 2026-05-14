@@ -18,10 +18,19 @@ FRONTEND_FOLDER = "."
 AUTO_SEED_DEMO_DATA = True
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
 
-# Look for gemini_keys.txt in secrets/ folder first, then root folder
-_secrets_path = "secrets/gemini_keys.txt"
+# Look for gemini_keys.txt in Render's secret folder first, then local secrets folder, then root folder
+_render_secrets_path = "/etc/secrets/gemini_keys.txt"
+_local_secrets_path = "secrets/gemini_keys.txt"
 _root_path = "gemini_keys.txt"
-GEMINI_KEYS_FILE = os.getenv("GEMINI_KEYS_FILE", _secrets_path if os.path.exists(_secrets_path) else _root_path)
+
+if os.path.exists(_render_secrets_path):
+    _default_keys_file = _render_secrets_path
+elif os.path.exists(_local_secrets_path):
+    _default_keys_file = _local_secrets_path
+else:
+    _default_keys_file = _root_path
+
+GEMINI_KEYS_FILE = os.getenv("GEMINI_KEYS_FILE", _default_keys_file)
 GEMINI_KEY_COOLDOWN_SECONDS = int(
     os.getenv("GEMINI_KEY_COOLDOWN_SECONDS", "75")
 )
