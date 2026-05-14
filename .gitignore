@@ -1,0 +1,11 @@
+agriculture.db
+gemini_keys.txt
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.env
+.env.local
+.DS_Store
+node_modules/
+.git/

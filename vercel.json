@@ -1,0 +1,28 @@
+{
+  "buildCommand": "pip install -r requirements.txt",
+  "devCommand": "python app.py",
+  "env": {
+    "GEMINI_MODEL": "@GEMINI_MODEL",
+    "GEMINI_KEYS_FILE": "@GEMINI_KEYS_FILE",
+    "GEMINI_API_KEYS": "@GEMINI_API_KEYS",
+    "GEMINI_KEY_COOLDOWN_SECONDS": "@GEMINI_KEY_COOLDOWN_SECONDS",
+    "GEMINI_TEMPERATURE": "@GEMINI_TEMPERATURE",
+    "GEMINI_MAX_OUTPUT_TOKENS": "@GEMINI_MAX_OUTPUT_TOKENS",
+    "GEMINI_SENSOR_HISTORY_LIMIT": "@GEMINI_SENSOR_HISTORY_LIMIT"
+  },
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ]
+}

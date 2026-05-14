@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Farm Advisor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-leaf">*</span>
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">AI Powered</p>
+          <h1 data-i18n="title">Smart Farm Advisor</h1>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="live-badge" id="liveBadge">
+          <span class="live-dot"></span>
+          <span data-i18n="live">Live</span>
+        </div>
+
+        <label class="lang-wrap">
+          <select id="languageSelect" aria-label="Change language">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="mr">Marathi</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <p class="last-updated" id="lastUpdated">--</p>
+
+    <section class="hero-card" id="heroCard" aria-labelledby="heroTitle">
+      <div class="hero-icon" id="heroIcon">OK</div>
+      <div class="hero-text">
+        <p class="section-label" data-i18n="todayLabel">Today's Status</p>
+        <h2 id="heroTitle" data-i18n="statusTitle">Waiting for sensor data...</h2>
+        <p class="hero-sub" id="heroSub" data-i18n="statusSub">Your ESP32 sensor will update this automatically.</p>
+      </div>
+    </section>
+
+    <section class="pump-bar" id="pumpBar" aria-label="Pump status">
+      <div class="pump-left">
+        <span class="pump-icon">P</span>
+        <div>
+          <p class="section-label" data-i18n="pumpLabel">Water Pump</p>
+          <strong class="pump-status" id="pumpStatus" data-i18n="pumpOff">OFF - Soil moisture is fine</strong>
+        </div>
+      </div>
+      <button class="pump-btn" id="pumpToggleBtn" type="button" data-i18n="pumpToggle">Force ON</button>
+    </section>
+
+    <section class="context-card" aria-labelledby="plantContextTitle">
+      <div class="context-copy">
+        <p class="section-label" data-i18n="plantSectionLabel">Field Context</p>
+        <h2 class="context-title" id="plantContextTitle" data-i18n="plantSectionTitle">Tell us what is growing on this soil</h2>
+        <p class="context-sub" data-i18n="plantSectionSub">This is sent to Flask and included with the ESP32 data for Gemini.</p>
+      </div>
+
+      <form class="context-form" id="plantForm">
+        <label class="context-field">
+          <span class="context-label" data-i18n="plantTypeLabel">What is currently grown?</span>
+          <select id="plantTypeSelect" name="plant_type">
+            <option id="plantTypeCropOption" value="crop">Crop</option>
+            <option id="plantTypeTreeOption" value="tree">Tree</option>
+            <option id="plantTypeNoneOption" value="none">Nothing grown</option>
+          </select>
+        </label>
+
+        <label class="context-field context-name-field">
+          <span class="context-label" id="plantNameLabel" data-i18n="plantNameLabel">Crop or tree name</span>
+          <input
+            id="plantNameInput"
+            name="plant_name"
+            type="text"
+            autocomplete="off"
+            placeholder="Example: wheat, mango, neem"
+          />
+        </label>
+
+        <button class="context-btn" id="plantSubmitBtn" type="submit" data-i18n="plantSave">Save field info</button>
+      </form>
+
+      <p class="context-status" id="plantStatusText" data-i18n="plantHint">This helps Gemini tailor the advice to the current field.</p>
+    </section>
+
+    <section class="advice-grid" aria-label="AI crop advice">
+      <article class="advice-card card-crop" id="cropCard">
+        <div class="card-tag" data-i18n="cropLabel">Crop Suggestion</div>
+        <div class="card-icon">C</div>
+        <h3 class="card-title" id="cropTitle" data-i18n="cropTitle">Analysing...</h3>
+        <p class="card-body" id="cropBody" data-i18n="cropBody">Waiting for Gemini AI response.</p>
+      </article>
+
+      <article class="advice-card card-water" id="waterCard">
+        <div class="card-tag" data-i18n="irrigLabel">Irrigation Advice</div>
+        <div class="card-icon">I</div>
+        <h3 class="card-title" id="waterTitle" data-i18n="waterTitle">Analysing...</h3>
+        <p class="card-body" id="waterBody" data-i18n="waterBody">Waiting for Gemini AI response.</p>
+      </article>
+
+      <article class="advice-card card-soil" id="soilCard">
+        <div class="card-tag" data-i18n="soilLabel">Soil Health</div>
+        <div class="card-icon">S</div>
+        <h3 class="card-title" id="soilTitle" data-i18n="soilTitle">Analysing...</h3>
+        <p class="card-body" id="soilBody" data-i18n="soilBody">Waiting for Gemini AI response.</p>
+      </article>
+    </section>
+
+    <section class="sensor-panel" aria-labelledby="sensorPanelTitle">
+      <div class="sensor-panel-head">
+        <p class="section-label" data-i18n="sensorSectionLabel">Sensor Snapshot</p>
+        <h3 class="sensor-panel-title" id="sensorPanelTitle" data-i18n="sensorSectionTitle">Latest field readings</h3>
+      </div>
+
+      <section class="sensor-strip" aria-label="Live sensor readings">
+        <div class="sensor-tile">
+          <span class="sensor-icon">M</span>
+          <span class="sensor-label" data-i18n="sMoisture">Moisture</span>
+          <strong class="sensor-val" id="moistureVal">--%</strong>
+        </div>
+        <div class="sensor-tile">
+          <span class="sensor-icon">T</span>
+          <span class="sensor-label" data-i18n="sTemp">Temp</span>
+          <strong class="sensor-val" id="tempVal">-- C</strong>
+        </div>
+        <div class="sensor-tile">
+          <span class="sensor-icon">H</span>
+          <span class="sensor-label" data-i18n="sHumidity">Humidity</span>
+          <strong class="sensor-val" id="humidityVal">--%</strong>
+        </div>
+      </section>
+    </section>
+
+    <div class="loading-bar" id="loadingBar" aria-hidden="true">
+      <div class="loading-fill"></div>
+    </div>
+
+    <div class="loading-screen" id="loadingScreen" aria-hidden="true">
+      <div class="loading-screen-card">
+        <div class="loading-screen-spinner"></div>
+        <h3 id="loadingScreenTitle">Sending sensor data to Gemini...</h3>
+        <p id="loadingScreenText">Please wait while Gemini reviews the latest 1 to 40 sensor readings and prepares advice.</p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p data-i18n="footer">Smart Farm Advisor - Powered by Gemini AI - ESP32 Sensor</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
