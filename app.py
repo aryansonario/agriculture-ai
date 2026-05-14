@@ -15,7 +15,11 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 FRONTEND_FOLDER = "."
 AUTO_SEED_DEMO_DATA = True
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
-GEMINI_KEYS_FILE = os.getenv("GEMINI_KEYS_FILE", "gemini_keys.txt")
+
+# Look for gemini_keys.txt in secrets/ folder first, then root folder
+_secrets_path = "secrets/gemini_keys.txt"
+_root_path = "gemini_keys.txt"
+GEMINI_KEYS_FILE = os.getenv("GEMINI_KEYS_FILE", _secrets_path if os.path.exists(_secrets_path) else _root_path)
 GEMINI_KEY_COOLDOWN_SECONDS = int(
     os.getenv("GEMINI_KEY_COOLDOWN_SECONDS", "75")
 )
@@ -45,7 +49,6 @@ DEMO_SENSOR_ROWS = [
         "moisture": 28.4,
         "temperature": 33.1,
         "humidity": 48.2,
-        "ph": 6.2,
         "pump_status": "ON",
         "timestamp": "2026-05-13 08:00:00",
     },
@@ -53,7 +56,6 @@ DEMO_SENSOR_ROWS = [
         "moisture": 41.7,
         "temperature": 30.4,
         "humidity": 58.9,
-        "ph": 6.5,
         "pump_status": "OFF",
         "timestamp": "2026-05-13 08:20:00",
     },
@@ -61,7 +63,6 @@ DEMO_SENSOR_ROWS = [
         "moisture": 52.6,
         "temperature": 27.8,
         "humidity": 67.3,
-        "ph": 6.7,
         "pump_status": "OFF",
         "timestamp": "2026-05-13 08:40:00",
     },
@@ -69,7 +70,6 @@ DEMO_SENSOR_ROWS = [
         "moisture": 63.9,
         "temperature": 26.9,
         "humidity": 72.4,
-        "ph": 6.8,
         "pump_status": "OFF",
         "timestamp": "2026-05-13 09:00:00",
     },
@@ -77,7 +77,6 @@ DEMO_SENSOR_ROWS = [
         "moisture": 49.3,
         "temperature": 29.1,
         "humidity": 63.5,
-        "ph": 6.5,
         "pump_status": "OFF",
         "timestamp": "2026-05-13 10:20:00",
     },
@@ -236,7 +235,6 @@ def save_to_database(
     moisture,
     temperature,
     humidity,
-    ph,
     pump_status,
     timestamp=None,
 ):
@@ -244,7 +242,6 @@ def save_to_database(
         "moisture": moisture,
         "temperature": temperature,
         "humidity": humidity,
-        "ph": ph,
         "pump_status": pump_status,
     }
     if timestamp:
@@ -264,7 +261,6 @@ def seed_demo_data():
             row["moisture"],
             row["temperature"],
             row["humidity"],
-            row["ph"],
             row["pump_status"],
             row["timestamp"],
         )
@@ -677,8 +673,6 @@ def receive_sensor_data():
     moisture = float(data.get("moisture", 0))
     temperature = float(data.get("temperature", 0))
     humidity = float(data.get("humidity", 0))
-    ph_value = data.get("ph")
-    ph = float(ph_value) if ph_value not in [None, ""] else None
 
     pump_status = decide_pump(moisture)
 
@@ -686,7 +680,6 @@ def receive_sensor_data():
         moisture,
         temperature,
         humidity,
-        ph,
         pump_status,
     )
 

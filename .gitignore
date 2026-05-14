@@ -1,5 +1,7 @@
 agriculture.db
 gemini_keys.txt
+secrets/*.txt
+secrets/.env*
 __pycache__/
 *.pyc
 *.pyo

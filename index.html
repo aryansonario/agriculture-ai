@@ -61,7 +61,7 @@
       <div class="context-copy">
         <p class="section-label" data-i18n="plantSectionLabel">Field Context</p>
         <h2 class="context-title" id="plantContextTitle" data-i18n="plantSectionTitle">Tell us what is growing on this soil</h2>
-        <p class="context-sub" data-i18n="plantSectionSub">This is sent to Flask and included with the ESP32 data for Gemini.</p>
+        <p class="context-sub" data-i18n="plantSectionSub">This is sent to Flask and included with the ESP32 data for our ML model.</p>
       </div>
 
       <form class="context-form" id="plantForm">
@@ -88,7 +88,41 @@
         <button class="context-btn" id="plantSubmitBtn" type="submit" data-i18n="plantSave">Save field info</button>
       </form>
 
-      <p class="context-status" id="plantStatusText" data-i18n="plantHint">This helps Gemini tailor the advice to the current field.</p>
+      <p class="context-status" id="plantStatusText" data-i18n="plantHint">This helps our ML model tailor the advice to the current field.</p>
+    </section>
+
+    <section class="context-card" aria-labelledby="imageAnalyzerTitle">
+      <div class="context-copy">
+        <p class="section-label" data-i18n="imageSectionLabel">Plant Health Vision</p>
+        <h2 class="context-title" id="imageAnalyzerTitle" data-i18n="imageSectionTitle">Scan your plant or crop</h2>
+        <p class="context-sub" data-i18n="imageSectionSub">Upload a photo to check for diseases, quality, and get care instructions.</p>
+      </div>
+
+      <div class="image-upload-area" style="border: 2px dashed var(--primary); border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; background: rgba(46, 125, 79, 0.05); transition: background 0.2s;">
+        <label for="plantImageInput" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div class="upload-icon" style="font-size: 2rem;">📷</div>
+          <span style="font-weight: 700; color: var(--primary-dk);" data-i18n="imageUploadText">Tap to take a picture or upload</span>
+        </label>
+        <input type="file" id="plantImageInput" accept="image/*" capture="environment" style="display: none;" />
+      </div>
+      
+      <div id="imagePreviewContainer" style="display: none; margin-top: 14px;">
+        <img id="imagePreview" src="" alt="Plant preview" style="max-width: 100%; border-radius: 10px; max-height: 300px; object-fit: cover; display: block; margin: 0 auto;" />
+        <button class="context-btn" id="analyzeImageBtn" type="button" style="margin-top: 14px; width: 100%;" data-i18n="analyzeBtn">Analyze Image</button>
+      </div>
+
+      <div id="imageAnalysisResult" style="display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line);">
+        <h3 class="card-title" data-i18n="imageResultTitle" style="margin-bottom: 12px;">Analysis Result</h3>
+        <div style="margin-top: 8px;">
+            <strong data-i18n="qualityLabel">Quality:</strong> <span id="imageResultQuality"></span>
+        </div>
+        <div style="margin-top: 8px;">
+            <strong data-i18n="diseaseLabel">Disease/Issues:</strong> <span id="imageResultDisease"></span>
+        </div>
+        <div style="margin-top: 8px;">
+            <strong data-i18n="precautionsLabel">Precautions:</strong> <span id="imageResultPrecautions"></span>
+        </div>
+      </div>
     </section>
 
     <section class="advice-grid" aria-label="AI crop advice">
@@ -96,21 +130,21 @@
         <div class="card-tag" data-i18n="cropLabel">Crop Suggestion</div>
         <div class="card-icon">C</div>
         <h3 class="card-title" id="cropTitle" data-i18n="cropTitle">Analysing...</h3>
-        <p class="card-body" id="cropBody" data-i18n="cropBody">Waiting for Gemini AI response.</p>
+        <p class="card-body" id="cropBody" data-i18n="cropBody">Waiting for ML model response.</p>
       </article>
 
       <article class="advice-card card-water" id="waterCard">
         <div class="card-tag" data-i18n="irrigLabel">Irrigation Advice</div>
         <div class="card-icon">I</div>
         <h3 class="card-title" id="waterTitle" data-i18n="waterTitle">Analysing...</h3>
-        <p class="card-body" id="waterBody" data-i18n="waterBody">Waiting for Gemini AI response.</p>
+        <p class="card-body" id="waterBody" data-i18n="waterBody">Waiting for ML model response.</p>
       </article>
 
       <article class="advice-card card-soil" id="soilCard">
         <div class="card-tag" data-i18n="soilLabel">Soil Health</div>
         <div class="card-icon">S</div>
         <h3 class="card-title" id="soilTitle" data-i18n="soilTitle">Analysing...</h3>
-        <p class="card-body" id="soilBody" data-i18n="soilBody">Waiting for Gemini AI response.</p>
+        <p class="card-body" id="soilBody" data-i18n="soilBody">Waiting for ML model response.</p>
       </article>
     </section>
 
@@ -146,13 +180,13 @@
     <div class="loading-screen" id="loadingScreen" aria-hidden="true">
       <div class="loading-screen-card">
         <div class="loading-screen-spinner"></div>
-        <h3 id="loadingScreenTitle">Sending sensor data to Gemini...</h3>
-        <p id="loadingScreenText">Please wait while Gemini reviews the latest 1 to 40 sensor readings and prepares advice.</p>
+        <h3 id="loadingScreenTitle">Sending data to ML model...</h3>
+        <p id="loadingScreenText">Please wait while our ML model reviews the data and prepares advice.</p>
       </div>
     </div>
 
     <footer class="footer">
-      <p data-i18n="footer">Smart Farm Advisor - Powered by Gemini AI - ESP32 Sensor</p>
+      <p data-i18n="footer">Smart Farm Advisor - Powered by Smart ML Model - ESP32 Sensor</p>
     </footer>
   </div>
 

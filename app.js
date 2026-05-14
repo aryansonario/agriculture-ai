@@ -1,4 +1,4 @@
-const FLASK_URL = "https://swapping-alto-unrest.ngrok-free.dev";
+const FLASK_URL = window.location.origin;
 const FETCH_INTERVAL = 10000;
 
 const BASE_TRANSLATIONS = {
@@ -88,7 +88,6 @@ const TRANSLATIONS = {
     sMoisture: "नमी",
     sTemp: "तापमान",
     sHumidity: "आर्द्रता",
-    sPh: "मिट्टी pH",
     pumpLabel: "पानी पंप",
     pumpOff: "बंद - मिट्टी में नमी ठीक है",
     pumpOn: "चालू - स्वचालित सिंचाई चल रही है",
@@ -158,7 +157,7 @@ const TRANSLATIONS = {
     sMoisture: "ओलावा",
     sTemp: "तापमान",
     sHumidity: "आर्द्रता",
-    sPh: "माती pH",
+
     pumpLabel: "पाण्याचा पंप",
     pumpOff: "बंद - मातीत ओलावा ठीक आहे",
     pumpOn: "चालू - स्वयंचलित सिंचन सुरू आहे",
