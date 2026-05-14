@@ -91,6 +91,29 @@
       <p class="context-status" id="plantStatusText" data-i18n="plantHint">This helps our ML model tailor the advice to the current field.</p>
     </section>
 
+    <section class="advice-grid" aria-label="AI crop advice">
+      <article class="advice-card card-crop" id="cropCard">
+        <div class="card-tag" data-i18n="cropLabel">Crop Suggestion</div>
+        <div class="card-icon">C</div>
+        <h3 class="card-title" id="cropTitle" data-i18n="cropTitle">Analysing...</h3>
+        <p class="card-body" id="cropBody" data-i18n="cropBody">Waiting for ML model response.</p>
+      </article>
+
+      <article class="advice-card card-water" id="waterCard">
+        <div class="card-tag" data-i18n="irrigLabel">Irrigation Advice</div>
+        <div class="card-icon">I</div>
+        <h3 class="card-title" id="waterTitle" data-i18n="waterTitle">Analysing...</h3>
+        <p class="card-body" id="waterBody" data-i18n="waterBody">Waiting for ML model response.</p>
+      </article>
+
+      <article class="advice-card card-soil" id="soilCard">
+        <div class="card-tag" data-i18n="soilLabel">Soil Health</div>
+        <div class="card-icon">S</div>
+        <h3 class="card-title" id="soilTitle" data-i18n="soilTitle">Analysing...</h3>
+        <p class="card-body" id="soilBody" data-i18n="soilBody">Waiting for ML model response.</p>
+      </article>
+    </section>
+
     <section class="context-card" aria-labelledby="imageAnalyzerTitle">
       <div class="context-copy">
         <p class="section-label" data-i18n="imageSectionLabel">Plant Health Vision</p>
@@ -123,29 +146,6 @@
             <strong data-i18n="precautionsLabel">Precautions:</strong> <span id="imageResultPrecautions"></span>
         </div>
       </div>
-    </section>
-
-    <section class="advice-grid" aria-label="AI crop advice">
-      <article class="advice-card card-crop" id="cropCard">
-        <div class="card-tag" data-i18n="cropLabel">Crop Suggestion</div>
-        <div class="card-icon">C</div>
-        <h3 class="card-title" id="cropTitle" data-i18n="cropTitle">Analysing...</h3>
-        <p class="card-body" id="cropBody" data-i18n="cropBody">Waiting for ML model response.</p>
-      </article>
-
-      <article class="advice-card card-water" id="waterCard">
-        <div class="card-tag" data-i18n="irrigLabel">Irrigation Advice</div>
-        <div class="card-icon">I</div>
-        <h3 class="card-title" id="waterTitle" data-i18n="waterTitle">Analysing...</h3>
-        <p class="card-body" id="waterBody" data-i18n="waterBody">Waiting for ML model response.</p>
-      </article>
-
-      <article class="advice-card card-soil" id="soilCard">
-        <div class="card-tag" data-i18n="soilLabel">Soil Health</div>
-        <div class="card-icon">S</div>
-        <h3 class="card-title" id="soilTitle" data-i18n="soilTitle">Analysing...</h3>
-        <p class="card-body" id="soilBody" data-i18n="soilBody">Waiting for ML model response.</p>
-      </article>
     </section>
 
     <section class="sensor-panel" aria-labelledby="sensorPanelTitle">

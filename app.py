@@ -511,21 +511,20 @@ def get_gemini_advice(sensor_rows, plant_type, plant_name):
     # Build crop-specific instruction for the suggestion field
     if plant_type == "crop" and plant_name:
         crop_instruction = (
-            f"crop_suggestion: First mention one specific care tip for the current crop ({plant_name}) "
-            f"based on the sensor data (e.g. watering, fertiliser, or pest risk). "
-            f"Then on the same line suggest the best next crop to rotate to after {plant_name} "
-            f"given this soil and climate — name the crop and give one reason."
+            f"crop_suggestion: Briefly mention a care tip for the current crop ({plant_name}). "
+            f"Then strictly predict the single best crop to grow on this soil next, based purely on the "
+            f"current moisture, temperature, and humidity data. Name the predicted crop and explain why."
         )
     elif plant_type == "tree" and plant_name:
         crop_instruction = (
-            f"crop_suggestion: Give one specific care or maintenance tip for the {plant_name} tree "
-            f"based on the sensor data (e.g. watering schedule, nutrient need, or disease risk). "
-            f"Then suggest one complementary crop or plant that grows well alongside {plant_name} in this soil."
+            f"crop_suggestion: Briefly mention a care tip for the {plant_name} tree. "
+            f"Then strictly predict the single best complementary crop to grow on this soil alongside it, "
+            f"based purely on the current moisture, temperature, and humidity data. Name the predicted crop and explain why."
         )
     else:
         crop_instruction = (
-            "crop_suggestion: Based on the sensor data (soil moisture, temperature, humidity), "
-            "name the single best crop to start growing on this field right now and give one reason why."
+            "crop_suggestion: Based purely on the current sensor data (soil moisture, temperature, humidity), "
+            "strictly predict the single best crop to start growing on this field right now. Name the predicted crop and explain why."
         )
 
     prompt = f"""
