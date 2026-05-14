@@ -602,11 +602,19 @@ async function saveFieldContext(event) {
       })
     });
 
-    const result = await response.json();
-
     if (!response.ok) {
-      throw new Error(result.error || strings.plantError);
+      const text = await response.text();
+      let errorMsg = strings.plantError;
+      try {
+        const json = JSON.parse(text);
+        if (json.error) errorMsg = json.error;
+      } catch (e) {
+        errorMsg = `Server Error (${response.status}): Database connection failed.`;
+      }
+      throw new Error(errorMsg);
     }
+
+    const result = await response.json();
 
     isPlantFormDirty = false;
 
@@ -750,10 +758,19 @@ if (els.analyzeImageBtn) {
           })
         });
 
-        const result = await response.json();
         if (!response.ok) {
-          throw new Error(result.error || "Analysis failed");
+          const text = await response.text();
+          let errorMsg = "Analysis failed";
+          try {
+            const json = JSON.parse(text);
+            if (json.error) errorMsg = json.error;
+          } catch(e) {
+             errorMsg = `Server Error (${response.status}): Unable to analyze image.`;
+          }
+          throw new Error(errorMsg);
         }
+
+        const result = await response.json();
 
         els.imageResultQuality.textContent = result.quality || "N/A";
         els.imageResultDisease.textContent = result.disease || "N/A";

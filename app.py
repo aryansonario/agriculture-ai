@@ -3,6 +3,7 @@ import json
 import os
 import time
 import base64
+from urllib.parse import urlparse
 from threading import Lock
 from google import genai
 from google.genai import types
@@ -31,8 +32,13 @@ GEMINI_SENSOR_HISTORY_LIMIT = max(
     min(40, int(os.getenv("GEMINI_SENSOR_HISTORY_LIMIT", "40"))),
 )
 
+# Clean up SUPABASE_URL to prevent PGRST125 Invalid Path errors
+# This removes any accidental paths (like /rest/v1) from the environment variable
+_parsed = urlparse(SUPABASE_URL.strip())
+_clean_url = f"{_parsed.scheme}://{_parsed.netloc}"
+
 # Initialize Supabase client
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase: Client = create_client(_clean_url, SUPABASE_KEY)
 
 VALID_PLANT_TYPES = {"crop", "tree", "none"}
 DEFAULT_CONTEXT = {
